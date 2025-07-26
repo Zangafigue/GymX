@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GymX - Premium Fitness Experience</title>
+    <meta name="description" content="Transform your body at GymX - Premium fitness classes, expert trainers, and state-of-the-art facilities.">
+    <meta name="keywords" content="gym, fitness, training, workout, premium, classes">
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+
+     <!-- Registration/Login Modal -->
+    <div id="authModal" class="modal" aria-hidden="true">
+        <div class="modal-content">
+            <button class="modal-close" aria-label="Close" onclick="closeModal('authModal')">&times;</button>
+            <div id="auth-steps">
+                <!-- Step 1: Choix -->
+                <div class="auth-step" id="auth-choice">
+                    <h2>Welcome to GymX</h2>
+                    <button class="btn btn-primary" onclick="showAuthStep('register')">New Member</button>
+                    <button class="btn btn-secondary" onclick="showAuthStep('login')">Existing Member</button>
+                </div>
+                <!-- Step 2: Inscription -->
+                <form class="auth-step" id="auth-register" style="display:none" autocomplete="off" novalidate onsubmit="return handleRegister(event)">
+                    <h2>Sign Up</h2>
+                    <label for="regName" class="sr-only">Full Name</label>
+                    <input type="text" id="regName" placeholder="Full Name" required>
+                    <label for="regEmail" class="sr-only">Email</label>
+                    <input type="email" id="regEmail" placeholder="Email" required>
+                    <label for="regPassword" class="sr-only">Password</label>
+                    <input type="password" id="regPassword" placeholder="Password" required>
+                    <button class="btn btn-primary" type="submit">Create Account</button>
+                    <button type="button" class="auth-link" onclick="showAuthStep('login')">Already have an account? Log in</button>
+                    <div class="auth-message" id="registerMsg"></div>
+                </form>
+                <!-- Step 3: Connexion -->
+                <form class="auth-step" id="auth-login" style="display:none" autocomplete="off" novalidate onsubmit="return handleLogin(event)">
+                    <h2>Sign In</h2>
+                    <label for="loginEmail" class="sr-only">Email</label>
+                    <input type="email" id="loginEmail" placeholder="Email" required>
+                    <label for="loginPassword" class="sr-only">Password</label>
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                    <button class="btn btn-primary" type="submit">Log In</button>
+                    <button type="button" class="auth-link" onclick="showAuthStep('register')">New here? Create an account</button>
+                    <div class="auth-message" id="loginMsg"></div>
+                </form>
+                <!-- Step 4: Espace membre -->
+                <div class="auth-step" id="auth-member" style="display:none">
+                    <h2>Welcome back, <span id="memberName"></span>!</h2>
+                    <button class="btn btn-primary" onclick="showSection('dashboard')">Go to Dashboard</button>
+                    <button class="btn btn-secondary" onclick="logout()">Log Out</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Section (affichée après connexion) -->
+    <section class="dashboard" id="dashboardSection" style="display:none">
+        <div class="container">
+            <h2>Your Member Dashboard</h2>
+            <p>Welcome, <span id="dashboardName"></span>!</p>
+            <button class="btn btn-outline" onclick="showSection('contactSupport')">Contact Support</button>
+            <button class="btn btn-primary" onclick="showSection('locations')">See Our Gyms</button>
+            <button class="btn btn-secondary" onclick="logout()">Log Out</button>
+            <!-- Ajoute ici d'autres infos personnalisées -->
+            <div id="myBookings" class="dashboard-bookings" style="margin-top:2rem;">
+                <h3>My Booked Classes</h3>
+                <ul id="bookingsList"></ul>
+                <p id="noBookingsMsg" style="color:var(--muted-foreground);">No bookings yet.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service client (affiché sur demande) -->
+    <section class="contact-support" id="contactSupportSection" style="display:none">
+        <div class="container">
+            <h2>Contact Support</h2>
+            <form id="supportForm" onsubmit="return handleSupport(event)">
+                <input type="text" id="supportSubject" placeholder="Subject" required>
+                <textarea id="supportMessage" placeholder="How can we help you?" required></textarea>
+                <button class="btn btn-primary" type="submit">Send</button>
+                <div class="auth-message" id="supportMsg"></div>
+            </form>
+            <button class="btn btn-secondary" onclick="showSection('dashboard')">Back to Dashboard</button>
+        </div>
+    </section>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="nav-wrapper">
+                <!-- Logo -->
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m6.5 6.5 11 11"/>
+                            <path d="m21 21-1-1"/>
+                            <path d="m3 3 1 1"/>
+                            <path d="m18 22 4-4"/>
+                            <path d="m2 6 4-4"/>
+                            <path d="m3 10 7-7"/>
+                            <path d="m14 21 7-7"/>
+                        </svg>
+                    </div>
+                    <span class="logo-text">GymX</span>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <nav class="nav-desktop">
+                    <a href="#classes" class="nav-link">Classes</a>
+                    <a href="#trainers" class="nav-link">Trainers</a>
+                    <a href="#pricing" class="nav-link">Pricing</a>
+                    <a href="#schedule" class="nav-link">Schedule</a>
+                    <a href="#contact" class="nav-link">Contact</a>
+                </nav>
+
+                <!-- Right Actions -->
+                <div class="nav-actions">
+                    <button class="theme-toggle" id="themeToggle">
+                        <svg class="sun-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="4"/>
+                            <path d="M12 2v2"/>
+                            <path d="M12 20v2"/>
+                            <path d="M4.93 4.93l1.41 1.41"/>
+                            <path d="M17.66 17.66l1.41 1.41"/>
+                            <path d="M2 12h2"/>
+                            <path d="M20 12h2"/>
+                            <path d="M6.34 17.66l-1.41 1.41"/>
+                            <path d="M19.07 4.93l-1.41 1.41"/>
+                        </svg>
+                        <svg class="moon-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                    </button>
+                    <button class="btn btn-primary book-now-btn" onclick="scrollToSection('#contact')">Book Now</button>
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <nav class="mobile-nav" role="navigation">
+                <a href="#classes" class="mobile-nav-link">Classes</a>
+                <a href="#trainers" class="mobile-nav-link">Trainers</a>
+                <a href="#pricing" class="mobile-nav-link">Pricing</a>
+                <a href="#schedule" class="mobile-nav-link">Schedule</a>
+                <a href="#contact" class="mobile-nav-link">Contact</a>
+                <button class="btn btn-primary mobile-book-btn" onclick="scrollToSection('#contact')">Book Now</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-bg"></div>
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Transform Your Body, Transform Your Life</h1>
+                <p class="hero-subtitle">Experience premium fitness with world-class trainers, cutting-edge equipment, and personalized programs designed to help you reach your goals.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary btn-lg" onclick="scrollToSection('#contact')">Start Your Journey</button>
+                    <button class="btn btn-secondary btn-lg" onclick="scrollToSection('#classes')">View Classes</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Classes Section -->
+    <section class="classes" id="classes">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Premium Classes</h2>
+                <p class="section-subtitle">Choose from our diverse range of fitness classes designed for all levels</p>
+            </div>
+            <div class="classes-grid">
+                <div class="class-card">
+                    <div class="class-icon">💪</div>
+                    <h3 class="class-title">Strength Training</h3>
+                    <p class="class-description">Build muscle and increase power with our comprehensive strength programs.</p>
+                    <div class="class-details">
+                        <span class="class-duration">60 min</span>
+                        <span class="class-level">All Levels</span>
+                    </div>
+                </div>
+                <div class="class-card">
+                    <div class="class-icon">🧘</div>
+                    <h3 class="class-title">Yoga & Flexibility</h3>
+                    <p class="class-description">Improve flexibility, balance, and mindfulness through guided yoga sessions.</p>
+                    <div class="class-details">
+                        <span class="class-duration">45 min</span>
+                        <span class="class-level">Beginner</span>
+                    </div>
+                </div>
+                <div class="class-card">
+                    <div class="class-icon">🏃</div>
+                    <h3 class="class-title">HIIT Cardio</h3>
+                    <p class="class-description">High-intensity interval training for maximum calorie burn and endurance.</p>
+                    <div class="class-details">
+                        <span class="class-duration">30 min</span>
+                        <span class="class-level">Intermediate</span>
+                    </div>
+                </div>
+                <div class="class-card">
+                    <div class="class-icon">🥊</div>
+                    <h3 class="class-title">Boxing</h3>
+                    <p class="class-description">Learn proper technique while getting an incredible full-body workout.</p>
+                    <div class="class-details">
+                        <span class="class-duration">50 min</span>
+                        <span class="class-level">All Levels</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trainers Section -->
+    <section class="trainers" id="trainers">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Expert Trainers</h2>
+                <p class="section-subtitle">Meet our certified professionals dedicated to your success</p>
+            </div>
+            <div class="trainers-grid">
+                <div class="trainer-card">
+                    <div class="trainer-image">
+                        <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop&crop=face" alt="Sarah Johnson" loading="lazy">
+                    </div>
+                    <div class="trainer-info">
+                        <h3 class="trainer-name">Sarah Johnson</h3>
+                        <p class="trainer-specialty">Strength & Conditioning</p>
+                        <p class="trainer-experience">8+ years experience</p>
+                        <div class="trainer-certifications">
+                            <span class="certification">NASM-CPT</span>
+                            <span class="certification">CSCS</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="trainer-card">
+                    <div class="trainer-image">
+                        <img src="https://images.unsplash.com/photo-1594381898411-846e7d193883?w=400&h=400&fit=crop&crop=face" alt="Mike Chen" loading="lazy">
+                    </div>
+                    <div class="trainer-info">
+                        <h3 class="trainer-name">Mike Chen</h3>
+                        <p class="trainer-specialty">HIIT & Cardio</p>
+                        <p class="trainer-experience">6+ years experience</p>
+                        <div class="trainer-certifications">
+                            <span class="certification">ACSM-CPT</span>
+                            <span class="certification">TRX</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="trainer-card">
+                    <div class="trainer-image">
+                        <img src="https://images.unsplash.com/photo-1595078475328-1ab05d0a6a0e?w=400&h=400&fit=crop&crop=face" alt="Emma Davis" loading="lazy">
+                    </div>
+                    <div class="trainer-info">
+                        <h3 class="trainer-name">Emma Davis</h3>
+                        <p class="trainer-specialty">Yoga & Wellness</p>
+                        <p class="trainer-experience">10+ years experience</p>
+                        <div class="trainer-certifications">
+                            <span class="certification">RYT-500</span>
+                            <span class="certification">Meditation</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Membership Plans</h2>
+                <p class="section-subtitle">Choose the plan that fits your lifestyle and goals</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-title">Basic</h3>
+                        <div class="pricing-price">
+                            <span class="price-currency">$</span>
+                            <span class="price-amount">49</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✓ Gym access during off-peak hours</li>
+                        <li>✓ Basic equipment usage</li>
+                        <li>✓ Locker room access</li>
+                        <li>✓ 1 guest pass per month</li>
+                    </ul>
+                    <button class="btn btn-outline" onclick="scrollToSection('#contact')">Get Started</button>
+                </div>
+                <div class="pricing-card pricing-featured">
+                    <div class="pricing-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <h3 class="pricing-title">Premium</h3>
+                        <div class="pricing-price">
+                            <span class="price-currency">$</span>
+                            <span class="price-amount">89</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✓ 24/7 gym access</li>
+                        <li>✓ All equipment and classes</li>
+                        <li>✓ Personal trainer session (monthly)</li>
+                        <li>✓ Nutrition consultation</li>
+                        <li>✓ 4 guest passes per month</li>
+                    </ul>
+                    <button class="btn btn-primary" onclick="scrollToSection('#contact')">Get Started</button>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-title">Elite</h3>
+                        <div class="pricing-price">
+                            <span class="price-currency">$</span>
+                            <span class="price-amount">149</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>✓ All Premium benefits</li>
+                        <li>✓ Unlimited personal training</li>
+                        <li>✓ Massage therapy sessions</li>
+                        <li>✓ Priority class booking</li>
+                        <li>✓ Unlimited guest passes</li>
+                    </ul>
+                    <button class="btn btn-outline" onclick="scrollToSection('#contact')">Get Started</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Schedule Section -->
+    <section class="schedule" id="schedule">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Class Schedule</h2>
+                <p class="section-subtitle">Find the perfect time for your workout</p>
+            </div>
+            <div class="schedule-filters">
+                <button class="filter-btn active" data-day="all">All Days</button>
+                <button class="filter-btn" data-day="monday">Monday</button>
+                <button class="filter-btn" data-day="tuesday">Tuesday</button>
+                <button class="filter-btn" data-day="wednesday">Wednesday</button>
+                <button class="filter-btn" data-day="thursday">Thursday</button>
+                <button class="filter-btn" data-day="friday">Friday</button>
+                <button class="filter-btn" data-day="saturday">Saturday</button>
+            </div>
+            <div class="schedule-grid" id="scheduleGrid">
+                <!-- Schedule items will be generated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Start Your Journey Today</h2>
+                <p class="section-subtitle">Ready to transform your life? Get in touch with us</p>
+            </div>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">📍</div>
+                        <div>
+                            <h4>Location</h4>
+                            <p>123 Fitness Street<br>Health City, HC 12345</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📞</div>
+                        <div>
+                            <h4>Phone</h4>
+                            <p>(555) 123-GYMX<br>Mon-Sun: 5AM-11PM</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">✉️</div>
+                        <div>
+                            <h4>Email</h4>
+                            <p>info@gymx.com<br>support@gymx.com</p>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form" id="contactForm">
+                    <div class="form-group">
+                        <input type="text" id="name" name="name" placeholder="Full Name" required>
+                        <div class="error-message" id="nameError"></div>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="email" name="email" placeholder="Email Address" required>
+                        <div class="error-message" id="emailError"></div>
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" id="phone" name="phone" placeholder="Phone Number" required>
+                        <div class="error-message" id="phoneError"></div>
+                    </div>
+                    <div class="form-group">
+                        <select id="membership" name="membership" required>
+                            <option value="">Select Membership Plan</option>
+                            <option value="basic">Basic - $49/month</option>
+                            <option value="premium">Premium - $89/month</option>
+                            <option value="elite">Elite - $149/month</option>
+                        </select>
+                        <div class="error-message" id="membershipError"></div>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="message" name="message" placeholder="Tell us about your fitness goals..." rows="4"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg">Start My Membership</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Locations Section -->
+    <section class="locations" id="locationsSection" style="display:none">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Our Gyms in Burkina Faso</h2>
+                <p class="section-subtitle">Find your nearest GymX club and contact your local team</p>
+            </div>
+            <div class="locations-grid">
+                <div class="location-card">
+                    <h3 class="location-city">Ouagadougou</h3>
+                    <p class="location-landmark">📍 Quartier Koulouba, près de la Place des Nations Unies</p>
+                    <p class="location-contact">Contact: +226 70 12 34 56</p>
+                    <p class="location-manager">Manager: Awa Ouédraogo</p>
+                </div>
+                <div class="location-card">
+                    <h3 class="location-city">Bobo-Dioulasso</h3>
+                    <p class="location-landmark">📍 Secteur 21, à côté du Stade Wobi</p>
+                    <p class="location-contact">Contact: +226 71 23 45 67</p>
+                    <p class="location-manager">Manager: Idrissa Sanou</p>
+                </div>
+                <div class="location-card">
+                    <h3 class="location-city">Koudougou</h3>
+                    <p class="location-landmark">📍 Quartier Cité Universitaire, face à l’Université Norbert Zongo</p>
+                    <p class="location-contact">Contact: +226 72 34 56 78</p>
+                    <p class="location-manager">Manager: Mariam Kaboré</p>
+                </div>
+                <div class="location-card">
+                    <h3 class="location-city">Banfora</h3>
+                    <p class="location-landmark">📍 Avenue de la Gare, près de la Mairie</p>
+                    <p class="location-contact">Contact: +226 73 45 67 89</p>
+                    <p class="location-manager">Manager: Souleymane Traoré</p>
+                </div>
+                <div class="location-card">
+                    <h3 class="location-city">Orodara</h3>
+                    <p class="location-landmark">📍 Quartier Centre, à côté du marché central</p>
+                    <p class="location-contact">Contact: +226 74 56 78 90</p>
+                    <p class="location-manager">Manager: Fatoumata Coulibaly</p>
+                </div>
+                <div class="location-card">
+                    <h3 class="location-city">Dédougou</h3>
+                    <p class="location-landmark">📍 Quartier Commercial, en face de la station Total</p>
+                    <p class="location-contact">Contact: +226 75 67 89 01</p>
+                    <p class="location-manager">Manager: Abdoul Aziz Zongo</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <div class="logo-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m6.5 6.5 11 11"/>
+                                <path d="m21 21-1-1"/>
+                                <path d="m3 3 1 1"/>
+                                <path d="m18 22 4-4"/>
+                                <path d="m2 6 4-4"/>
+                                <path d="m3 10 7-7"/>
+                                <path d="m14 21 7-7"/>
+                            </svg>
+                        </div>
+                        <span class="logo-text">GymX</span>
+                    </div>
+                    <p class="footer-description">Transform your body and mind with our premium fitness experience. Join thousands of members who have achieved their goals with GymX.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#classes">Classes</a></li>
+                        <li><a href="#trainers">Trainers</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#schedule">Schedule</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#contact">Contact Us</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Membership</a></li>
+                        <li><a href="#">Cancellation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Connect</h4>
+                    <div class="social-links">
+                        <a href="#" class="social-link">Facebook</a>
+                        <a href="#" class="social-link">Instagram</a>
+                        <a href="#" class="social-link">Twitter</a>
+                        <a href="#" class="social-link">YouTube</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 GymX. All rights reserved. | Privacy Policy | Terms of Service</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" aria-live="polite"></div>
+
+    <!-- Bouton d'accès rapide à l'inscription/connexion -->
+    <button class="floating-auth-btn" onclick="openModal('authModal')" aria-label="Sign in or Register">👤</button>
+
+    <script src="./js/script.js"></script>
+</body>
+</html>

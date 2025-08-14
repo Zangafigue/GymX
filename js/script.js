@@ -1,8 +1,3 @@
-/*
-GymX Premium Fitness Website - JavaScript
-Interactive features: schedule display, form validation, theme toggle
-*/
-
 // DOM Content Loaded Event
 document.addEventListener('DOMContentLoaded', function() {
     initializeHeader();
@@ -408,6 +403,7 @@ function scrollToSection(selector) {
     }
 }
 
+
 // Intersection Observer for Animations
 function initializeAnimations() {
     const observerOptions = {
@@ -506,6 +502,8 @@ function handleLogin(e) {
 }
 
 function logout() {
+    let response = confirm("Are you sure you want to log out?");
+    if (!response) return;
     localStorage.removeItem('gymxLogged');
     showSection('main');
     closeModal('authModal');
@@ -543,10 +541,10 @@ function handleSupport(e) {
     const subject = document.getElementById('supportSubject').value.trim();
     const msg = document.getElementById('supportMessage').value.trim();
     if (subject.length < 2 || msg.length < 10) {
-        document.getElementById('supportMsg').textContent = "Please fill all fields.";
+        document.getElementById('supportMsg').textContent = "Please fill all fields. At least three words";
         return false;
     }
-    document.getElementById('supportMsg').textContent = "Message sent! Our team will reply soon.";
+    document.getElementById('supportMsg').textContent = showToast("Message sent! Our team will reply soon.");
     setTimeout(() => {
         document.getElementById('supportMsg').textContent = "";
         showSection('dashboard');

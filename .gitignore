@@ -1,0 +1,7 @@
+# Fichiers générés par l'OS
+.DS_Store
+Thumbs.db
+
+# Fichiers de l'éditeur (ex: VSCode)
+.vscode/
+.idea/

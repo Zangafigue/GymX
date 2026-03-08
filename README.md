@@ -1,112 +1,82 @@
-# GymX
+# GymX — Gym Website
 
-**Transform Your Body, Transform Your Life**
+A responsive gym homepage built with HTML, CSS, and JavaScript as a group frontend development project at Burkina Institute of Technology (BIT).
 
-GymX is a modern, responsive fitness website for managing gym memberships, booking classes, and connecting with expert trainers. It provides an interactive platform for users to explore premium classes, view schedules, discover locations, and get support—all with a sleek user experience.
+---
+
+## Overview
+
+GymX is a modern, responsive website for a gym. It showcases the gym's classes, trainers, pricing plans, weekly schedules, and provides a contact form for visitors to get in touch.
 
 ---
 
 ## Features
 
-- **Modern Responsive Design:** Works beautifully on desktop and mobile devices.
-- **User Authentication:** Simple registration and login system (local storage, demo purpose).
-- **Member Dashboard:** Personalized dashboard for managing class bookings and profile info.
-- **Class Booking:** Browse and book fitness classes for any day of the week.
-- **Expert Trainers:** Meet certified professionals and view their specialties.
-- **Membership Plans:** Compare Basic, Premium, and Elite options.
-- **Multi-location Support:** Find GymX clubs in Ouagadougou, Bobo-Dioulasso, and more.
-- **Contact & Support:** Validated contact form and support request system.
-- **Theme Toggle:** Easily switch between dark and light modes.
+- Classes section — overview of available gym classes
+- Trainers section — trainer profiles and specialties
+- Pricing plans — membership tiers and details
+- Weekly schedule — class timetable display
+- Contact form — visitor inquiry form
+- Fully responsive design (mobile-friendly)
 
 ---
 
-## Demo
+## Preview
 
-> _Add a link to a live demo or screenshots here if available._
+> Open `index.html` in your browser to view the site.
+
+---
+
+## Project Structure
+
+```
+GymX/
+├── index.html        # Main page
+├── css/
+│   └── style.css     # Stylesheet
+└── js/
+    └── script.js     # Interactive behavior
+```
 
 ---
 
 ## Getting Started
 
-**To run GymX locally:**
+No installation required. This is a static frontend project.
 
-1. **Clone the repository**
-    ```bash
-    git clone https://github.com/Zangafigue/GymX.git
-    cd GymX
-    ```
+```bash
+# Clone the repository
+git clone https://github.com/Zangafigue/GymX.git
 
-2. **Open `index.html` in your browser**  
-   No backend or build step required! All features work client-side with HTML, CSS, and JavaScript.
-
----
-
-## Folder Structure
-
-```
-GymX/
-│
-├── index.html
-├── README.md
-├── css/
-│   └── styles.css
-├── js/
-│   └── script.js
-└── assets/
-    └── (images, logos, etc.)
+# Open in browser
+cd GymX
+open index.html
 ```
 
----
-
-## Technologies Used
-
-- **HTML5** – Semantic markup for all sections.
-- **CSS3** – Responsive layouts and modern visual design.
-- **JavaScript (Vanilla)** – Handles all interactivity (no frameworks).
-- **LocalStorage** – Demo user data and bookings.
+Or simply double-click `index.html` to open it in your browser.
 
 ---
 
-## Usage
+## Built With
 
-- **Authentication:**  
-  Click the floating user icon (👤) to register or sign in. Credentials are stored in your browser (local storage) for demo purposes.
-- **Book Classes:**  
-  Explore the Schedule section and book available classes. Bookings appear in your dashboard.
-- **Member Dashboard:**  
-  Manage your bookings, view personalized information, and contact support.
-- **Contact:**  
-  Use the contact form to get in touch or send a support request.
+- **HTML5** — page structure
+- **CSS3** — styling and responsive layout
+- **Vanilla JavaScript** — interactive behavior
 
 ---
 
-## Customization
+## Team — Group 7
 
-- **Add new classes or trainers:**  
-  Edit the relevant sections in `index.html` and update the schedule/class data in `js/script.js`.
-- **Connect to a backend:**  
-  Replace authentication and booking logic in `js/script.js` with API calls.
-- **Branding:**  
-  Update the logo SVG and change CSS variables in `css/styles.css` for your brand.
+This project was developed as a frontend web development assignment supervised by **Lebian Wilfried NIKIEMA** at BIT (Academic Year 2024–2025).
 
----
-
-## Contributing
-
-Contributions are welcome! Please open an issue or submit a pull request for suggestions, fixes, or improvements.
-
----
+| Name |
+|------|
+| TRAORE Zangafigue Mathias |
+| SAWADOGO Asseta |
+| MEDA Franck |
+| YANOGO Fabiana Stéphanie |
+| MANDI Othniel Melki |
 
 ## License
 
-This project is licensed under the MIT License.
-
----
-
-## Contact
-
-- **Email:** info@gymx.com
-- **Phone:** (555) 123-GYMX
-- **Locations:** [See Locations Section](#features) or on the website
-
----
+This project is for educational purposes — Burkina Institute of Technology, 2024–2025.
